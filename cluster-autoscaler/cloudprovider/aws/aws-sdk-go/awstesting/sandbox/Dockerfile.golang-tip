@@ -1,7 +1,7 @@
 # Based on docker-library's golang 1.6 alpine and wheezy docker files.
 # https://github.com/docker-library/golang/blob/master/1.6/alpine/Dockerfile
 # https://github.com/docker-library/golang/blob/master/1.6/wheezy/Dockerfile
-FROM buildpack-deps:22.04-scm
+FROM buildpack-deps:kinetic-curl
 
 ENV GOLANG_SRC_REPO_URL https://github.com/golang/go
 
