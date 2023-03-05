@@ -651,7 +651,7 @@ func (a *StaticAutoscaler) RunOnce(currentTime time.Time) caerrors.AutoscalerErr
 			scaleDownStart := time.Now()
 			metrics.UpdateLastTime(metrics.ScaleDown, scaleDownStart)
 			empty, needDrain := a.scaleDownPlanner.NodesToDelete(currentTime)
-			scaleDownStatus, typedErr := a.scaleDownActuator.StartDeletion(empty, needDrain, currentTime)
+			scaleDownStatus, typedErr := a.scaleDownActuator.StartDeletion(empty, needDrain)
 			a.scaleDownActuator.ClearResultsNotNewerThan(scaleDownStatus.NodeDeleteResultsAsOf)
 			metrics.UpdateDurationFromStart(metrics.ScaleDown, scaleDownStart)
 			metrics.UpdateUnremovableNodesCount(countsByReason(a.scaleDownPlanner.UnremovableNodes()))
@@ -784,6 +784,7 @@ func (a *StaticAutoscaler) deleteCreatedNodesWithErrors() (bool, error) {
 			continue
 		}
 		if nodeGroup == nil || reflect.ValueOf(nodeGroup).IsNil() {
+			a.clusterStateRegistry.RefreshCloudProviderNodeInstancesCache()
 			return false, fmt.Errorf("node %s has no known nodegroup", node.GetName())
 		}
 		nodesToBeDeletedByNodeGroupId[nodeGroup.Id()] = append(nodesToBeDeletedByNodeGroupId[nodeGroup.Id()], node)
